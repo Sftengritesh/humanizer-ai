@@ -3,7 +3,7 @@ async function humanize() {
   const mode = document.getElementById("mode").value;
   const ultra = document.getElementById("ultra").checked;
 
-  const res = await fetch("http://127.0.0.1:5000/humanize", {
+  const res = await fetch("https://humanizer-backend-2604.onrender.com/", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({ text, mode, ultra })
