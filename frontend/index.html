@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Humanize AI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Humanize AI</h1>
+  <p>Turn AI-generated drafts into natural, human-edited text</p>
+</header>
+
+<div class="controls">
+  <select id="mode">
+    <option value="free">Free</option>
+    <option value="standard" selected>Standard</option>
+    <option value="academic">Academic</option>
+    <option value="simple">Simple</option>
+    <option value="flowing">Flowing</option>
+    <option value="informal">Informal</option>
+    <option value="formal">Formal</option>
+  </select>
+
+  <label class="toggle">
+    <input type="checkbox" id="ultra">
+    Ultra Rewrite
+  </label>
+</div>
+
+<div class="editor">
+  <textarea id="input" placeholder="Paste AI-generated text here..."></textarea>
+  <textarea id="output" placeholder="Human-edited output will appear here"></textarea>
+</div>
+
+<button onclick="humanize()">Humanize</button>
+
+<p id="score"></p>
+
+<script src="script.js"></script>
+</body>
+</html>
