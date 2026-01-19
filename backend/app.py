@@ -13,6 +13,16 @@ nltk.download("punkt", quiet=True)
 def health():
     return {"status": "Humanizer backend running"}, 200
 
+@app.route("/humanize", methods=["POST", "OPTIONS"])
+
+def home():
+    return {
+        "status": "Humanizer backend running",
+        "endpoints": {
+            "POST": "/humanize"
+        }
+    }, 200
+
 app = Flask(__name__)
 CORS(app)
 
