@@ -8,6 +8,11 @@ import nltk
 # Ensure tokenizer
 nltk.download("punkt", quiet=True)
 
+@app.route("/humanize", methods=["POST", "OPTIONS"])
+
+def health():
+    return {"status": "Humanizer backend running"}, 200
+
 app = Flask(__name__)
 CORS(app)
 
