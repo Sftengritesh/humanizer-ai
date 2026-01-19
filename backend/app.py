@@ -11,6 +11,8 @@ from nltk.tokenize import sent_tokenize
 app = Flask(__name__)
 CORS(app)
 nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+
 
 # ------------------------
 # Health check
