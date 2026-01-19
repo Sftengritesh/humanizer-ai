@@ -5,38 +5,34 @@ import numpy as np
 from nltk.tokenize import sent_tokenize
 import nltk
 
-# Ensure tokenizer
-nltk.download("punkt", quiet=True)
-
-@app.route("/humanize", methods=["POST", "OPTIONS"])
-
-def health():
-    return {"status": "Humanizer backend running"}, 200
-
-@app.route("/humanize", methods=["POST", "OPTIONS"])
-
-def home():
-    return {
-        "status": "Humanizer backend running",
-        "endpoints": {
-            "POST": "/humanize"
-        }
-    }, 200
-
+# ---------------------------
+# App setup (MUST BE FIRST)
+# ---------------------------
 app = Flask(__name__)
 CORS(app)
 
-# --------------------------------------------------
-# Utilities
-# --------------------------------------------------
+# Ensure tokenizer
+nltk.download("punkt", quiet=True)
 
+# ---------------------------
+# Health / Root Route
+# ---------------------------
+@app.route("/", methods=["GET"])
+def home():
+    return {
+        "status": "Humanizer backend running",
+        "endpoint": "/humanize"
+    }, 200
+
+# ---------------------------
+# Utilities
+# ---------------------------
 def clean(text):
     return re.sub(r"\s+", " ", text).strip()
 
-# --------------------------------------------------
+# ---------------------------
 # Core Human Editing Passes
-# --------------------------------------------------
-
+# ---------------------------
 AI_PHRASES = {
     "it is important to note that": "",
     "this clearly demonstrates": "this shows",
@@ -102,10 +98,9 @@ def tone_smoothing(text, mode):
         text = text.replace(k, v)
     return clean(text)
 
-# --------------------------------------------------
-# Human-Style Quality Heuristic (Internal)
-# --------------------------------------------------
-
+# ---------------------------
+# Human-Style Quality Heuristic
+# ---------------------------
 def human_style_score(text):
     sentences = sent_tokenize(text)
     words = text.split()
@@ -116,11 +111,10 @@ def human_style_score(text):
     score = min((variance * 12) + (lexical * 50), 100)
     return int(score)
 
-# --------------------------------------------------
+# ---------------------------
 # Human Editing Pipeline
-# --------------------------------------------------
-
-def humanize(text, mode="standard", ultra=False):
+# ---------------------------
+def humanize_text(text, mode="standard", ultra=False):
     passes = [
         remove_ai_signatures,
         restructure_sentences,
@@ -140,12 +134,14 @@ def humanize(text, mode="standard", ultra=False):
 
     return text, score
 
-# --------------------------------------------------
-# API
-# --------------------------------------------------
-
-@app.route("/humanize", methods=["POST"])
+# ---------------------------
+# API Endpoint
+# ---------------------------
+@app.route("/humanize", methods=["POST", "OPTIONS"])
 def api_humanize():
+    if request.method == "OPTIONS":
+        return "", 204
+
     data = request.json or {}
     text = data.get("text", "").strip()
     mode = data.get("mode", "standard")
@@ -154,15 +150,10 @@ def api_humanize():
     if not text:
         return jsonify({"error": "Text is required"}), 400
 
-    result, score = humanize(text, mode, ultra)
+    result, score = humanize_text(text, mode, ultra)
 
     return jsonify({
         "result": result,
         "human_style_confidence": score,
         "mode": mode
     })
-
-if __name__ == "__main__":
-    print("🚀 Humanizer backend running (production logic)")
-app.run(host="0.0.0.0", port=5000)
-
